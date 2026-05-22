@@ -1,90 +1,102 @@
-A TypeScript-based real-time voice AI agent for clinical appointment booking.
-It supports multilingual conversations (English, Hindi, Tamil) and handles booking, rescheduling, and cancellations with intelligent reasoning.
+🩺 Real-Time Multilingual Voice AI Agent (TypeScript)
+
+A real-time voice AI agent built entirely in TypeScript for clinical appointment booking.
+It supports English, Hindi, and Tamil, and can handle booking, rescheduling, and cancellations through natural voice conversations.
 
 🚀 Features
-🎙 Real-time voice interaction (STT → AI → TTS)
+🎙 Real-time voice interaction (WebSocket-based)
 🌐 Multilingual support (English, Hindi, Tamil)
-🧠 Agent-based reasoning with tool calling
+🤖 LLM agent with tool calling (no hardcoding)
 📅 Appointment booking & conflict handling
-💾 Session memory using Redis (with TTL)
-⚡ Low-latency pipeline (<450ms target)
-📞 Outbound call support (queue-based)
-🧱 Tech Stack
+💾 Redis-based session memory (with TTL)
+📞 Outbound call support using queues
+⚡ Low latency design (<450 ms target)
+🧱 Tech Stack (Only TypeScript)
 Backend: Node.js + TypeScript + Fastify
-AI: OpenAI (tool calling)
-Memory: Redis
 Realtime: WebSockets
+AI Agent: OpenAI (tool calling via TS)
+Memory: Redis (ioredis)
 Queue: BullMQ
+Database: In-memory (for demo)
 📁 Project Structure
 src/
- ├── server.ts
- ├── realtime/
- ├── agent/
- ├── memory/
- ├── services/
- ├── scheduler/
- ├── db/
+ ├── server.ts          # WebSocket server
+ ├── agent.ts           # LLM agent logic
+ ├── tools.ts           # Booking & scheduling tools
+ ├── memory.ts          # Redis session memory
+ ├── db.ts              # In-memory database
+ ├── stt.ts             # Speech-to-text (mock/API)
+ ├── tts.ts             # Text-to-speech (mock/API)
+ ├── language.ts        # Language detection
+ ├── scheduler.ts       # Outbound calls (BullMQ)
 ⚙️ Setup
-1. Clone repo
-git clone https://github.com/your-username/realtime-multilingual-voice-ai-agent.git
-cd realtime-multilingual-voice-ai-agent
-2. Install dependencies
+1. Clone Repository
+git clone https://github.com/your-username/realtime-multilingual-voice-ai-agent-ts.git
+cd realtime-multilingual-voice-ai-agent-ts
+2. Install Dependencies
 npm install
-3. Add environment variables
+3. Add Environment Variables
 
-Create .env file:
+Create a .env file:
 
-OPENAI_API_KEY=your_api_key_here
-4. Run project
+OPENAI_API_KEY=your_api_key
+REDIS_URL=redis://localhost:6379
+4. Run Server
 npx ts-node-dev src/server.ts
 🌐 Usage
-HTTP: http://localhost:5500
 WebSocket: ws://localhost:5500
 
-Send audio input → get AI voice response.
+Send audio input → receive AI-generated voice response.
 
 🧠 How It Works
-User speaks (audio input)
-Speech → Text (STT)
-Language detection
-AI agent processes request
-Tool execution (booking, slots, etc.)
-Response → converted to speech (TTS)
+User sends voice input
+STT converts speech → text
+Language detection (EN / HI / TA)
+LLM agent processes request
+Agent calls tools (booking, slots, etc.)
+Memory is updated (Redis + DB)
+Response converted to speech (TTS)
+Audio sent back to user
 💾 Memory Design
-Session Memory (Redis):
-Language
+🔹 Session Memory (Redis)
+Language preference
 Current intent
-Pending actions
+Conversation state
 TTL: 30 minutes
-Long-term Memory (DB):
-Patient history
-Previous bookings
+🔹 Long-Term Memory (DB)
+Patient details
+Appointment history
 📅 Scheduling Logic
 Prevents double booking
-Rejects past time slots
+Rejects past slots
 Suggests alternative slots
-Handles rescheduling and cancellations
-⚡ Latency
+Supports rescheduling & cancellation
+📞 Outbound Campaigns
+Built using BullMQ (TypeScript)
+Supports:
+appointment reminders
+follow-ups
+Queue → Worker → AI Agent → User
+⚡ Latency Target
 
-Target: < 450 ms
+Goal: < 450 ms
 
-Breakdown:
-
-STT: ~120 ms
-LLM: ~150 ms
-Tool calls: ~50 ms
-TTS: ~100 ms
+Step	Time
+STT	~120 ms
+LLM	~150 ms
+Tools	~50 ms
+TTS	~100 ms
 🎁 Bonus Features
-Redis TTL-based session expiry
+Redis TTL-based sessions
 Queue-based outbound calls
-Modular agent design
-Scalable architecture
+Modular TypeScript architecture
+Scalable design
 ⚠️ Limitations
-STT/TTS are mocked (can be replaced with real APIs)
-In-memory DB used for demo
-No UI (backend-focused system)
+STT/TTS are mocked (can integrate real APIs)
+In-memory DB (not persistent)
+No frontend UI
 📌 Future Improvements
-Integrate Deepgram (STT)
-Integrate ElevenLabs (TTS)
-Add frontend voice UI
-Deploy on cloud (AWS/GCP)
+Integrate real STT (Deepgram)
+Integrate real TTS (ElevenLabs)
+Add frontend voice interface
+Deploy on cloud (AWS/GCP)v
